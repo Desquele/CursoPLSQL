@@ -294,15 +294,31 @@ END;
 */
 SELECT * FROM DEPARTMENTS;
 
+
+SET SERVEROUTPUT ON
 DECLARE
     --Declaracion de variables 
     departamento_idMayor DEPARTMENTS.department_id%TYPE;
     departamento_location_id DEPARTMENTS.location_id%TYPE;
+    departmento_manager_id DEPARTMENTS.manager_id%TYPE;
     departamento_departamento_nombre DEPARTMENTS.department_name%TYPE;
 BEGIN
 
-    departamento_idMayor := MAX(department_id)
+    departamento_location_id := 1000;
+    departamento_departamento_nombre := 'INFORMATICA';
+    departmento_manager_id := 100;
     
+    SELECT 
+        MAX(department_id) INTO departamento_idMayor
+    FROM DEPARTMENTS;
+    
+    departamento_idMayor := departamento_idMayor + 1;
+    
+    INSERT INTO DEPARTMENTS(department_id,department_name,manager_id,location_id)
+    VALUES(departamento_idMayor, departamento_departamento_nombre, 
+    departmento_manager_id, departamento_location_id);
+    
+    COMMIT;
 END;
 /
 
