@@ -294,7 +294,7 @@ END;
 */
 SELECT * FROM DEPARTMENTS;
 
-
+/*
 SET SERVEROUTPUT ON
 DECLARE
     --Declaracion de variables 
@@ -322,3 +322,50 @@ BEGIN
 END;
 /
 
+*/
+
+
+/*
+        Ejercicio 2:
+        Crear un bloque PL/SQL que modifique la LOCATION_ID del nuevo
+        departamento a 1700. En este caso usemos el COMMIT dentro del bloque
+        PL/SQL.
+*/
+/*
+DECLARE
+    idLocation DEPARTMENTS.location_id%TYPE;
+    idDepartamento DEPARTMENTS.department_id%TYPE;
+    
+    
+BEGIN
+    idLocation := 1700;
+    UPDATE DEPARTMENTS
+    SET departments.location_id = idLocation
+    WHERE department_id = 271;
+END;
+/
+*/
+
+
+
+
+
+/*
+    Ejercicio 3:
+    Por último, hacer otro bloque PL/SQL que elimine ese departamento nuevo.
+*/
+
+/*
+DECLARE
+    idLocation DEPARTMENTS.location_id%TYPE;
+    idDepartamento DEPARTMENTS.department_id%TYPE;
+BEGIN
+
+   idDepartamento := 271;
+   
+    DELETE FROM DEPARTMENTS
+    WHERE departments.department_id = idDepartamento;
+END;
+/
+
+*/
