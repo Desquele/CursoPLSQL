@@ -1,13 +1,14 @@
 /*
     COLECCIONES Y TIPOS COMPUESTOS
     
-    Son componentes que pueden albergar mÃºltiples valores,
+    Son componentes que pueden albergar multiples valores,
     a diferencia de los escalares que solo pueden tener 1.
     
-    Hay de 2 posibles tipos:
+    Hay de 2  tipos:
         - Records: Son similares a los registros de una tabla, pueden
-            albergar una file de datos de distintos tipos. POdemos definirlos
-            de forma personalizada con la clÃ usula RECORD. PUEDEN LLEVAR CLÃUSULA NULL Y CLÃUSULA DEFAULT
+            albergar una file de datos de distintos tipos. 
+            Podemos definirlos de forma personalizada con la cláusula RECORD. 
+            PUEDEN LLEVAR cláusula NULL Y CLÃ?USULA DEFAULT
             
             Sintaxis:
                 TYPE nombre IS RECORD (campo1, campo2)
@@ -21,20 +22,20 @@
                     datos completos employees%rowtype);
                     emple1 empleado
             
-            "mÃ¡s flexibilidad y quieres capturar solo campos especÃ­ficos, combinarlos de diferentes tablas, 
+            "más flexibilidad y quieres capturar solo campos especificos, combinarlos de diferentes tablas, 
             o personalizar la estructura de datos."
                     
         - Colecciones o collections: 
-                                                    - Arrays asociativos(INDEX BY)
-                                                    - Nested tables
-                                                    - Varrays
+            - Arrays asociativos(INDEX BY)
+            - Nested tables
+            - Varrays
 */
 
 /*
 SET SERVEROUTPUT ON
 
 DECLARE
-    -- DefiniciÃ³n de un tipo RECORD llamado 'empleado' 
+    -- Definición de un tipo RECORD llamado 'empleado' 
     TYPE empleado IS RECORD (
         nombre  VARCHAR2(100),  -- Almacena el nombre completo
         salario NUMBER,   -- Almacena el salario del empleado
@@ -42,10 +43,11 @@ DECLARE
         datos   employees%ROWTYPE -- Almacena todos los datos de una fila de la tabla 'employees'
     );
     
-    -- Variable 'empleado1' de tipo 'empleado'
+    -- Variable 'empleado1' de tipo 'empleado' record
     empleado1 empleado;
 BEGIN
-    -- Se realiza una consulta para obtener todos los datos del empleado con ID 100 y se almacenan en 'empleado1.datos'
+    -- Se realiza una consulta para obtener todos los datos del empleado con ID 100 
+    --y se almacenan en 'empleado1.datos'
     SELECT
         *
     INTO empleado1.datos
@@ -60,10 +62,10 @@ BEGIN
     -- Se calcula el salario con un descuento del 20% y se asigna a 'empleado1.salario'
     empleado1.salario := empleado1.datos.salary * 0.80;
 
-    -- Se asigna la fecha de contrataciÃ³n del empleado a 'empleado1.fecha'
+    -- Se asigna la fecha de contratación del empleado a 'empleado1.fecha'
     empleado1.fecha := empleado1.datos.hire_date;
     
-    -- ImpresiÃ³n de los valores almacenados en las variables del RECORD
+    -- Impresión de los valores almacenados en las variables del RECORD
     dbms_output.put_line(empleado1.nombre);   -- Imprime el nombre completo del empleado
     dbms_output.put_line(empleado1.salario);  -- Imprime el salario con descuento
     dbms_output.put_line(empleado1.fecha);    -- Imprime la fecha de contrataciÃ³n
@@ -81,7 +83,7 @@ DECLARE
     );
     emp_record emp_info;
 BEGIN
-    -- AquÃ­ puedes capturar solo los datos necesarios de employees y departments
+    -- Aquí se puede capturar solo los datos necesarios de employees y departments
     SELECT e.first_name, e.salary, d.department_name
     INTO emp_record.emp_name, emp_record.emp_salary, emp_record.dept_name
     FROM employees e, departments d
@@ -90,84 +92,86 @@ END
 */
 
 
+
 /*
-    Ejercicio 1
+    Ejercicio 1 Definir un RECORD con columnas especificas
+    Crea un tipo RECORD que almacene el nombre y salario de un empleado. 
+    Selecciona los datos del empleado con employee_id = 102 y muestra el nombre y salario en la consola
 */
 /*
-SET SERVEROUTPUT ON
 DECLARE
-    TYPE empleado IS RECORD (
-        nombre varchar2(50),
-        salario employees.salary%type,
-        informacionFila employees%rowtype
+    --Creación del record
+    TYPE empleadorecord IS RECORD (
+            nombre       VARCHAR2(25),
+            salario      NUMBER,
+            filacompleta employees%rowtype
     );
-    
-   empleado1 empleado; 
-
+    --Creación de variable
+    empleado empleadorecord;
 BEGIN
-    SELECT * 
-        INTO empleado1.informacionFila
-    FROM employees
-    WHERE employee_id = 101;
+    /*
+    SELECT
+        first_name,
+        salary
+    INTO
+        empleado.nombre,
+        empleado.salario
+    FROM
+        employees
+    WHERE
+        employee_id = 101;
+
+    dbms_output.put_line(empleado.nombre || ' '|| empleado.salario);
     
-    empleado1.nombre := empleado1.informacionFila.first_name;
-    empleado1.salario := empleado1.informacionFila.salary;
     
-    dbms_output.put_line(empleado1.nombre);
-    dbms_output.put_line(empleado1.salario);
-    dbms_output.put_line(empleado1.informacionFila.salary);
+    SELECT
+        *
+    INTO
+        empleado.filaCompleta
+    FROM
+        employees
+    WHERE
+        employee_id = 101;
+
+    dbms_output.put_line(empleado.filaCompleta.first_name);
+    
 END;
 /
 */
 
 /*
-    Ejercicio 2 Definir un RECORD con columnas especÃ­ficas
-    Crea un tipo RECORD que almacene el nombre y salario de un empleado. 
-    Selecciona los datos del empleado con employee_id = 102 y muestra el nombre y salario en la consola
-*/
-
-/*
-DECLARE
-    TYPE emp_info IS RECORD (
-        nombre employees.first_name%TYPE,
-        salario employees.salary%TYPE
-    );
-    emp_record emp_info;
-BEGIN
-    SELECT first_name, salary INTO emp_record.nombre, emp_record.salario FROM employees WHERE employee_id = 102;
-    
-    dbms_output.put_line('Nombre: ' || emp_record.nombre);
-    dbms_output.put_line('Salario: ' || emp_record.salario);
-END;
-*/
-
-/*
-    Ejercicio 4: Actualizar datos y manejar excepciones con RECORD
+    Ejercicio 2: Actualizar datos y manejar excepciones con RECORD
     Crea un RECORD que almacene los datos de un empleado y 
     luego actualiza su salario. Si no existe un empleado con el employee_id dado, 
-    maneja la excepciÃ³n no_data_found.
+    maneja la excepción no_data_found.
 */
+
 /*
 DECLARE
-    TYPE emp_info IS RECORD (
-        emp_id employees.employee_id%TYPE,
+    --Creacion del record
+    TYPE empleadoInfo IS RECORD (
+        empleadoId employees.employee_id%TYPE,
         nombre employees.first_name%TYPE,
         salario employees.salary%TYPE
     );
-    emp_record emp_info;
+    --Creacion de la variable
+    empleadoRecord empleadoInfo;
 BEGIN
+    --Sentencia SQL  para almacenar las variables en el record
     SELECT employee_id, first_name, salary 
-        INTO emp_record.emp_id, emp_record.nombre, emp_record.salario 
+        INTO empleadoRecord.empleadoId, empleadoRecord.nombre, empleadoRecord.salario 
     FROM employees 
     WHERE employee_id = 104;
     
-    emp_record.salario := emp_record.salario * 0.10; -- Incrementar salario
+    empleadoRecord.salario := empleadoRecord.salario * 0.10; -- Incrementar salario
     
+    --Actualización
     UPDATE employees
-    SET salary = emp_record.salario
-    WHERE employee_id = emp_record.emp_id;
+    SET salary = empleadoRecord.salario
+    WHERE employee_id = empleadoRecord.empleadoId;
     
-    dbms_output.put_line('Salario actualizado para: ' || emp_record.nombre || ' - ' || emp_record.salario);
+    dbms_output.put_line('Salario actualizado para: ' || empleadoRecord.nombre || ' - ' 
+    || empleadoRecord.salario);
     
 EXCEPTION
     WHEN no_data_found THEN
@@ -175,14 +179,14 @@ EXCEPTION
 END;
 */
 
+
 /*
     INSERTS Y UPDATES CON RECORDS
 */
 
 --1: Crear tabla basada en regiones
 /*
-CREATE TABLE regiones
-    AS
+CREATE TABLE regiones AS
         SELECT
             *
         FROM
@@ -208,6 +212,7 @@ END;
 /
 */
 
+--UPDATE
 /*
 DECLARE
     region1 regions%rowtype;
@@ -223,4 +228,82 @@ BEGIN
         region_id = 1;
 
 END;
+*/
+
+
+
+
+/*
+    Colecciones y tipos compuestos: Almacenan objetos del mismo tipo, parecido a los arrays
+ 
+    Arrays asociativos: Associative arrays (INDEX BY tables)
+    - Son colecciones pl/SQL con dos columnas
+    - Clave primaria de tipo entero o cadena
+    - Valores: un tipo que puede ser escalar o record
+    
+    codigo | value
+    
+    SINTAXIS:
+    TYPE nombre IS TABLE OF
+        tipoColumna
+        INDEX BY PLS_INTEGER | BINARY INTEGER | VARCHAR2(x);
+        
+    Ejemplo
+    --Departamentos
+    TYPE DEPARTAMENTOS IS TABLE OF
+        DEPARTMENTS.DEPARTMENT_NAME%TYPE
+    INDEX BY PLS_INTEGER
+    
+    TYPE EMPLEADOS IS TABLE OF
+        EMPLOYEES%ROWTYPE
+    INDEX BY PLS_INTEGER;
+    
+    --Creacion de variables
+    depts DEPARTAMENTOS;
+    empls EMPLEADOS;
+    
+    --Tipo simple
+    PARA ACCEDER AL ARRAY
+    ARRAY(N) "N -> Posicion" son dinamicos
+    
+    depts(1) := 'Informatica';
+    depts(2) := 'RRHH';
+    
+    --Imprimir
+    dbms_output.put_line(depts(1));
+   
+    
+    -- TIPO COMPUESTO
+    ARRAY(N).campo
+    SELECT 
+        *
+    INTO empls(1)
+    FROM employees
+    WHERE employee_id = 100;
+    
+    --Imprimir
+    dbms_output.put_line(empls(1).first_name);
+    
+    
+    
+    
+    METODOS:
+    EXISTS (N): DETECTAR SI EXISTE UN ELEMENTO
+    COUNT: NÚMERO DE ELEMENTOS
+    FIRST: DEVUELVE EL ÍNDICE MÁS PEQUEÑO
+    LAST: DEVUELVE EL ÍNDICE MÁS ALTO
+    PRIOR(N): DEVUELVE EL ÍNDICE ANTERIOR A N
+    NEXT(N): DEVUELVE EL ÍNDICE POSTERIOR A N
+    DELETE:BORRA TODO
+    DELETE(N): BORRAR EL ÍNDICE N
+    DELETE(M,N): BORRA DE LOS ÍNDICES MAN
+    
+    ejemplo:
+    DBMS_OUTPUT.PUT_LINE(DEPTS.LAST);
+    DBMS_OUTPUT.PUT_LINE(DEPTS.FIRST);
+    IF DEPTS.EXISTS(3 THEN 
+        DBMS_OUTPUT.PUT_LINE(DEPTS(3)); 
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('ESE VALOR NO EXISTE'); 
+    END IF;
 */
