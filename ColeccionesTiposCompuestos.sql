@@ -583,7 +583,7 @@ DECLARE
     -- Creación del array
     TYPE empleadoArrays IS TABLE OF
         empleado_record
-        INDEX BY PLS_INTEGER;
+    INDEX BY PLS_INTEGER;
     
     --Variables
     empleados empleadoArrays;
@@ -591,7 +591,8 @@ DECLARE
     id_employee_menor employees.employee_id%TYPE;
     id_employee_mayor employees.employee_id%TYPE;
 BEGIN
-    --Obtener el id del empleado menor
+
+ --Obtener el id del empleado menor
     SELECT MIN(EMPLOYEE_ID)
     INTO id_employee_menor
     FROM EMPLOYEES;
@@ -601,6 +602,7 @@ BEGIN
     INTO id_employee_mayor
     FROM EMPLOYEES;
     
+        
     -- Mediante un bucle cargamos en la colección los empleados. El campo NAME
     -- debe contener FIRST_NAME y LAST_NAME concatenado.
     FOR i IN id_employee_menor..id_employee_mayor LOOP
@@ -615,11 +617,11 @@ BEGIN
     END LOOP; 
     
     -- Visualizar toda la colección:
-    /*
-    FOR i IN empleados.FIRST..empleados.LAST LOOP
+
+    FOR i IN empleados.first..empleados.last LOOP
         dbms_output.put_line(empleados(i).nombre || ' ' || empleados(i).salario || empleados(i).codigo_departamento);
     END LOOP;
-    */
+        
     -- Visualizar el primer empleado
     dbms_output.put_line(empleados(empleados.first).nombre || ' ' ||
     empleados(empleados.first).salario || ' ' || empleados(empleados.first).codigo_departamento);
@@ -627,18 +629,19 @@ BEGIN
     -- Visualizar el ultimo empleado
     dbms_output.put_line(empleados(empleados.last).nombre || ' ' ||
     empleados(empleados.last).salario || ' ' || empleados(empleados.last).codigo_departamento);
-      
+   
+       
     -- Visualizar el número de empleados
     dbms_output.put_line(empleados.count);
 
     -- Borramos los empleados que ganan menos de 7000 y visualizamos de
     -- nuevo la colección, empleados.salary < 7000
-    
-    FOR i IN id_employee_menor..id_employee_mayor LOOP
+    FOR i IN empleados.first..empleados.last LOOP
         IF empleados(i).salario < 7000 THEN
             empleados.delete(i);
         END IF;
     END LOOP;
+   
      
     -- Visualización
      FOR i IN empleados.FIRST..empleados.LAST LOOP
@@ -647,6 +650,7 @@ BEGIN
     
      -- Visualizar el número de empleados
     dbms_output.put_line(empleados.count);
-
+    
 END;
 /
+
