@@ -218,6 +218,7 @@ END;
 /*
     WHERE CURRENT OF
 */
+/*
 DECLARE
     CURSOR cursor_empleado_actualizar IS SELECT * FROM employees FOR UPDATE;
     
@@ -244,3 +245,135 @@ BEGIN
     CLOSE cursor_empleado_actualizar;
 END;
 /
+*/
+
+
+
+
+
+
+/*
+    PRÁCTICA CON CURSORES
+*/
+
+/*
+    Hacer un programa que tenga un cursor que vaya visualizando los salarios de
+    los empleados. Si en el cursor aparece el jefe (Steven King) se debe generar un
+    RAISE_APPLICATION_ERROR indicando que el sueldo del jefe no se puede
+    ver
+*/
+/*
+DECLARE
+    --Declaración de cursor
+    CURSOR c_empleados_salarios IS SELECT employee_id, first_name,last_name, salary FROM employees;
+    
+    --Declaración de la variable
+    id_empleado employees.employee_id%type;
+    
+    jefe_first_name CONSTANT employees.first_name%TYPE := 'Steven';
+    jefe_last_name CONSTANT employees.last_name%TYPE := 'King';
+BEGIN
+    
+    -- Obtener el id del empleado
+     FOR i IN c_empleados_salarios LOOP
+        -- Verificar si el empleado es jefe
+        IF i.first_name = jefe_first_name AND i.last_name = jefe_last_name THEN
+            -- Generar excepción si es el jefe
+            RAISE_APPLICATION_ERROR(-20001,'El sueldo de el jefe no se puede mostrar');
+           -- dbms_output.put_line('El sueldo de el jefe no se puede mostrar');
+
+        ELSE
+            dbms_output.put_line('id: ' || i.employee_id ||
+            ', Nombre completo: ' || i.first_name || ' ' || i.last_name ||
+            ', salario: ' || i. salary);
+        END IF;
+    END LOOP;   
+END;
+/
+*/
+
+
+
+/*
+    Vamos averiguar cuales son los JEFES (MANAGER_ID) de cada
+    departamento. En la tabla DEPARTMENTS figura el MANAGER_ID de cada
+    departamento, que a su vez es también un empleado. Hacemos un bloque con
+    dos cursores. (Esto se puede hacer fácilmente con una sola SELECT pero vamos
+    a hacerlo de esta manera para probar parámetros en cursores).
+
+
+    El primero de todos los empleados
+    o El segundo de departamentos, buscando el MANAGER_ID con el
+    parámetro que se le pasa.
+    o Por cada fila del primero, abrimos el segundo cursor pasando el
+    EMPLOYEE_ID
+    o Si el empleado es MANAGER_ID en algún departamento debemos
+    pintar el Nombre del departamento y el nombre del MANAGER_ID
+    diciendo que es el jefe.
+    o Si el empleado no es MANAGER de ningún departamento debemos
+    poner “No es jefe de nada”
+
+*/
+/*
+SET SERVEROUTPUT ON
+DECLARE
+    --Cursor con todos los empleados
+    CURSOR c_empleados IS 
+        SELECT * FROM employees;
+
+    --Cursor departamento con el manager_id
+    CURSOR c_departamentos(id_manager departments.manager_id%type) IS 
+    SELECT * FROM departments 
+    WHERE manager_id = id_manager;
+    
+    -- Variable departamento
+    departamento_nombre departments%rowtype;
+BEGIN
+    -- Ciclo de empleados
+    FOR i IN c_empleados LOOP
+        -- Abrir el cursor de departamentos
+        OPEN c_departamentos(i.employee_id);
+        
+            FETCH c_departamentos INTO departamento_nombre;
+            
+            -- Si el cursor encuentra un departamento, el empleado es jefe
+            IF c_departamentos%found THEN
+                dbms_output.put_line('El empleado ' || i.first_name || ' ' || i.last_name || ' ' || 'es jefe del departamento ' || departamento_nombre.department_name);
+            ELSE
+                dbms_output.put_line('El empleado ' || i.first_name || ' ' || i.last_name || ', no es jefede nada');
+            END IF;
+            
+        -- Cerrar el cursor de departamentos
+        CLOSE c_departamentos;
+    END LOOP;
+    
+END;
+/
+
+*/
+
+
+
+
+/*
+    -Crear un cursor con parámetros que pasando el número de departamento
+    visualice el número de empleados de ese departamento
+*/
+SET SERVEROUTPUT ON
+DECLARE
+    CURSOR c_empleados_cantidad(numeroDepartamento employees.department_id%type) IS 
+        SELECT count(*) 
+        FROM employees 
+        WHERE department_id = numeroDepartamento;
+    
+    mumero_empleado number;
+BEGIN
+    -- Se le pasa el codigo del departamento
+    OPEN c_empleados_cantidad(50);
+    LOOP
+        FETCH c_empleados_cantidad INTO mumero_empleado;
+        
+        EXIT WHEN c_empleados_cantidad%NOTFOUND;
+        dbms_output.put_line('Cantidad de empleado es: ' || mumero_empleado);
+    END LOOP;
+END;
