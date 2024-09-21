@@ -250,8 +250,6 @@ END;
 
 
 
-
-
 /*
     PRÁCTICA CON CURSORES
 */
@@ -359,6 +357,7 @@ END;
     -Crear un cursor con parámetros que pasando el número de departamento
     visualice el número de empleados de ese departamento
 */
+/*
 SET SERVEROUTPUT ON
 DECLARE
     CURSOR c_empleados_cantidad(numeroDepartamento employees.department_id%type) IS 
@@ -376,4 +375,70 @@ BEGIN
         EXIT WHEN c_empleados_cantidad%NOTFOUND;
         dbms_output.put_line('Cantidad de empleado es: ' || mumero_empleado);
     END LOOP;
+END;
+/
+*/
+
+
+
+
+
+
+/*
+    Crear un bucle FOR donde declaramos una subconsulta que nos devuelva el
+    nombre de los empleados que sean ST_CLERK. Es decir, no declaramos el
+    cursor sino que lo indicamos directamente en el FOR.
+*/
+/*
+SET SERVEROUTPUT ON
+DECLARE
+BEGIN
+    FOR i IN (SELECT first_name FROM employees WHERE job_id = 'ST_CLERK') LOOP
+        dbms_output.put_line(i.first_name || ' es de ST CLERK');
+    END LOOP;
+    
+END;
+/
+*/
+
+
+
+
+
+
+/*
+    -Creamos un bloque que tenga un cursor para empleados. Debemos crearlo con
+FOR UPDATE.
+o Por cada fila recuperada, si el salario es mayor de 8000 incrementamos el
+salario un 2%
+o Si es menor de 8000 lo hacemos en un 3%
+o Debemos modificarlo con la cláusula CURRENT OF
+o Comprobar que los salarios se han modificado correctamente
+*/
+
+SET SERVEROUTPUT ON
+DECLARE
+    -- Declaación del cursor
+    CURSOR c_empleado_salario_actualizar IS SELECT salary FROM employees FOR UPDATE;
+    
+BEGIN
+    -- Leer el cursor
+    FOR i IN c_empleado_salario_actualizar LOOP
+        -- Verificar si el salario es mayor a 800, si es así, hace lo siguiente:
+        IF i.salary > 8000 THEN
+            UPDATE employees
+            SET salary = salary * 1.02
+            -- Fila actual
+            WHERE CURRENT OF c_empleado_salario_actualizar;
+        -- Sino hace lo siguiente:
+        ELSE
+            UPDATE employees
+            SET salary = salary * 1.03
+            -- Fila actual
+            WHERE CURRENT OF c_empleado_salario_actualizar;
+        END IF;
+    END LOOP;
+    
+      -- Confirmar que se han actualizado los salarios
+    dbms_output.put_line('Los salarios se han actualizado correctamente.');
 END;
